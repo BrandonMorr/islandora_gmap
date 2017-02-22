@@ -12,7 +12,10 @@ function islandora_gmap_uninstall() {
     'islandora_gmap_collapsed',
     'islandora_gmap_width',
     'islandora_gmap_height',
-    'islandora_gmap_zoom',
+    'islandora_gmap_initial_zoom',
+    'islandora_gmap_min_zoom',
+    'islandora_gmap_max_zoom',
+    'islandora_gmap_fit_bounds',
     'islandora_gmap_api_key',
   );
 

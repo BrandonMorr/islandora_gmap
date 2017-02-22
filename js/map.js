@@ -2,19 +2,30 @@
   Drupal.islandora_gmap = {
     maps: {},
     init: function () {
-      $.each(Drupal.settings.islandora_gmap.data, Drupal.islandora_gmap.initMap);
+      $.each(Drupal.settings.islandora_gmap.data, function (id, info) {
+        var $map = $("#" + id);
+        $map.once('islandora-gmap-init', function () {
+          var $collapsed_fieldsets = $map.closest('fieldset.collapsible.collapsed');
+          if ($collapsed_fieldsets.length > 0) {
+            $collapsed_fieldsets.one('collapsed', function (evt) {
+              Drupal.islandora_gmap.initMap(id, info);
+            });
+          }
+          else {
+            Drupal.islandora_gmap.initMap(id, info);
+          }
+        });
+      });
     },
     initMap: function (id, info) {
-      var map = new google.maps.Map(document.getElementById(id), {
-        center: {lat: 0, lng: 0},
-        zoom: info.zoom
-      });
+      var $map = $("#" + id);
+      var map = new google.maps.Map($map.get(0), info.map_settings);
       Drupal.islandora_gmap.maps[id] = map;
 
       map.data.addGeoJson(info.geojson);
-      Drupal.islandora_gmap.recenterMap(map);
+      Drupal.islandora_gmap.recenterMap(map, info);
     },
-    recenterMap: function (map, zoom) {
+    recenterMap: function (map, info) {
       var bounds = new google.maps.LatLngBounds();
 
       map.data.forEach(function (feature) {
@@ -23,7 +34,12 @@
         });
       });
 
-      map.fitBounds(bounds);
+      if (info.fit) {
+        map.fitBounds(bounds);
+      }
+      else {
+        map.panTo(bounds.getCenter());
+      }
     }
   };
 })(jQuery);
