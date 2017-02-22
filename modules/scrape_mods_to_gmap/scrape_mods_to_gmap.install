@@ -1,0 +1,17 @@
+<?php
+/**
+ * @file
+ * (Un)installation hooks.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function scrape_mods_to_gmap_uninstall() {
+  $variables = array(
+    'scrape_mods_to_gmap_xpaths',
+    'scrape_mods_to_gmap_attempt_cleanup',
+    'scrape_mods_to_gmap_fallback_to_search',
+  );
+  array_map('variable_del', $variables);
+}
