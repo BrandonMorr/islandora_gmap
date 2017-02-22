@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * (Un)installation hooks.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_gmap_uninstall() {
+  $variables = array(
+    'islandora_gmap_collapsed',
+    'islandora_gmap_width',
+    'islandora_gmap_height',
+    'islandora_gmap_zoom',
+    'islandora_gmap_api_key',
+  );
+
+  array_map('variable_del', $variables);
+}

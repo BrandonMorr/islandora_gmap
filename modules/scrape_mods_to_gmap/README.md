@@ -1,14 +1,14 @@
-# Islandora Google Maps
+# Google Maps: Scrape MODS
 
 ## Introduction
 
-Facilitates the rendering of maps using the Google Maps JS API, v3.
+Scrapes some coordinates from MODS, in much the same manner as @mjordan's [islandora_simple_map](https://github.com/mjordan/islandora_simple_map) module.
 
 ## Requirements
 
 This module requires the following modules/libraries:
 
-* [Islandora](https://github.com/islandora/islandora)
+* [Islandora Google Maps](https://github.com/discoverygarden/islandora_gmap)
 
 ## Installation
 

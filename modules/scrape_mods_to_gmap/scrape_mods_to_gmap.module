@@ -1,0 +1,105 @@
+<?php
+/**
+ * @file
+ * General hook implementations.
+ */
+
+const SCRAPE_MODS_TO_GMAP_XPATHS = "//mods:subject/mods:cartographics/mods:coordinates\r\n//mods:subject/mods:geographic";
+const SCRAPE_MODS_TO_GMAP_COORDS_REGEX = '/^[+\-]?\d+\.\d+,\s*[+\-]?\d+\.\d+?/';
+
+/**
+ * Implements hook_islandora_gmap_form_fieldset().
+ */
+function scrape_mods_to_gmap_islandora_gmap_form_fieldset(&$form_state) {
+  $base = array(
+    '#type' => 'fieldset',
+    '#title' => t('MODS Scrape'),
+  );
+
+  $base['scrape_mods_to_gmap_xpaths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('XPaths'),
+    '#default_value' => variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS),
+  );
+  $base['scrape_mods_to_gmap_attempt_cleanup'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Attempt cleanup?'),
+    '#default_value' => variable_get('scrape_mods_to_gmap_attempt_cleanup', FALSE),
+    '#description' => t('Ideally, values should be comma-separated, signed floating-point numbers indicating latitude and longitude respectively... Attempt some parsing to match expectations.'),
+  );
+  $base['scrape_mods_to_gmap_fallback_to_search'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Search fallback?'),
+    '#default_value' => variable_get('scrape_mods_to_gmap_fallback_to_search', FALSE),
+    '#description' => t('To support more human-readable values, such as "Charlottetown, PE, Canada", fallback to passing non-coordinate data as a text search to <a href="@api_url">@api_name</a>. Notice the reference in the API documentation regarding higher (10-times) API quota usage.', array(
+      '@api_url' => 'https://developers.google.com/places/web-service/search#TextSearchRequests',
+      '@api_name' => t('Google Places API'),
+    )),
+  );
+  return $base;
+}
+
+/**
+ * Implements hook_islandora_gmap_gather_info().
+ */
+function scrape_mods_to_gmap_islandora_gmap_gather_geojson(AbstractObject $object) {
+  $xpaths = array_filter(array_map('trim', explode("\r\n", variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS))));
+
+  if (!isset($object['MODS'])) {
+    return;
+  }
+
+  $doc = new DOMDocument();
+  $doc->loadXML($object['MODS']->content);
+
+  $xpath = new DOMXPath($doc);
+  // XXX: May need to expose the ability to register namespaces at some point?
+  $xpath->registerNamespace('mods', 'http://www.loc.gov/mods/v3');
+
+  $coords = array();
+
+  foreach ($xpaths as $path) {
+    $result = $xpath->query($path);
+    foreach ($result as $node) {
+      $coords[] = trim($node->nodeValue);
+    }
+  }
+
+  $coords = array_filter($coords);
+
+  // Match two optionally-signed comma-separated floating-point numbers.
+  $good_coords = preg_grep(SCRAPE_MODS_TO_GMAP_COORDS_REGEX, $coords);
+  $cleanup = variable_get('scrape_mods_to_gmap_attempt_cleanup', FALSE);
+  $search = variable_get('scrape_mods_to_gmap_fallback_to_search', FALSE);
+
+  $bad_coords = ($cleanup || $search) ?
+    drupal_map_assoc(array_diff($coords, $good_coords)) :
+    FALSE;
+
+  if ($bad_coords && $cleanup) {
+    $replaced = str_replace(';', ',', $bad_coords);
+    $now_good = preg_grep(SCRAPE_MODS_TO_GMAP_COORDS_REGEX, $replaced);
+    $bad_coords = array_diff_key($bad_coords, $now_good);
+    $good_coords = array_merge($good_coords, $now_good);
+  }
+
+  $to_return = array_map(function ($coord) {
+    return array(
+      'type' => 'Feature',
+      'geometry' => array(
+        'type' => 'Point',
+        'coordinates' => array_reverse(array_map('doubleval', array_map('trim', explode(',', $coord)))),
+      ),
+    );
+  }, $good_coords);
+
+  if ($bad_coords && $search) {
+    module_load_include('inc', 'scrape_mods_to_gmap', 'includes/places');
+    $searched = scrape_mods_to_gmap_search_fallback($bad_coords);
+    if ($searched) {
+      $to_return = array_merge($to_return, array_values($searched));
+    }
+  }
+
+  return $to_return;
+}
