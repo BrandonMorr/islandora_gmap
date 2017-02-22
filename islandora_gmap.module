@@ -60,14 +60,14 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
       '#type' => 'checkbox',
       '#title' => t('Fit viewport to data?'),
       '#default_value' => variable_get('islandora_gmap_fit_bounds', TRUE),
-      '#description' => t('Pan and zoom the viewport such that all data is visible; otherwise, the viewport will be panned to the center of the data, at the initial zoom level.'),
+      '#description' => t('Pan and zoom the viewport such that all data is visible; otherwise, the viewport will be panned to the center of the data.'),
     ),
     'islandora_gmap_initial_zoom' => array(
       '#title' => t('Initial zoom level'),
       '#type' => 'textfield',
       '#size' => 10,
       '#default_value' => variable_get('islandora_gmap_initial_zoom', '10'),
-      '#description' => t('The higher the number, the higher the zoom.'),
+      '#description' => t('The higher the number, the higher the zoom. Only applicable when <em>not</em> fitting to data.'),
       '#states' => array(
         'visible' => array(
           ':input[name=islandora_gmap_fit_bounds]' => array('checked' => FALSE),
