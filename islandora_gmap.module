@@ -136,7 +136,7 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
                     ),
                     'map_settings' => array(
                       'center' => array('lat' => 0, 'lng' => 0),
-                      'zoom' => intval(variable_get('islandora_gmap_zoom', 10)),
+                      'zoom' => intval(variable_get('islandora_gmap_initial_zoom', 10)),
                       'minZoom' => $parse_zoom_constraint(variable_get('islandora_gmap_min_zoom', -1)),
                       'maxZoom' => $parse_zoom_constraint(variable_get('islandora_gmap_max_zoom', 16)),
                     ),
