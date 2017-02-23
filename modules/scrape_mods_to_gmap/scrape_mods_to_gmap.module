@@ -40,7 +40,7 @@ function scrape_mods_to_gmap_islandora_gmap_form_fieldset(&$form_state) {
 }
 
 /**
- * Implements hook_islandora_gmap_gather_info().
+ * Implements hook_islandora_gmap_gather_geojson().
  */
 function scrape_mods_to_gmap_islandora_gmap_gather_geojson(AbstractObject $object) {
   $xpaths = array_filter(array_map('trim', explode("\r\n", variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS))));

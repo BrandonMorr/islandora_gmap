@@ -32,6 +32,7 @@ function _scrape_mods_to_gmap_lookup($coord) {
       'key' => variable_get('islandora_gmap_api_key'),
       'query' => $coord,
     ),
+    'external' => TRUE,
   )));
 
   $response_data = drupal_json_decode($response->data);
