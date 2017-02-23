@@ -14,6 +14,14 @@ This module requires the following modules/libraries:
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
 
+## Configuration
+
+XPaths from which to scrape can be configured, one per line. By default, they should contain only coordinate data as pairs of signed floating point numbers separated by a comma, each indicating latitude and longitude in degrees.
+
+The "attempt cleanup" option presently permits a semi-colon instead of a comma to be used.
+
+The "fallback to search" option will forward anything which does not appear to be coordinate data off as a query against the Google Places API.
+
 ## Troubleshooting/Issues
 
 Having problems or solved a problem? Contact [discoverygarden](http://support.discoverygarden.ca).

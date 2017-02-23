@@ -18,7 +18,7 @@ function scrape_mods_to_gmap_islandora_gmap_form_fieldset(&$form_state) {
 
   $base['scrape_mods_to_gmap_xpaths'] = array(
     '#type' => 'textarea',
-    '#title' => t('XPaths'),
+    '#title' => t('Coordinate XPaths'),
     '#default_value' => variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS),
   );
   $base['scrape_mods_to_gmap_attempt_cleanup'] = array(
