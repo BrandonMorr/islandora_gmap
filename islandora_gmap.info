@@ -1,0 +1,7 @@
+name = Islandora Google Maps
+description = "Render Google Maps for objects"
+package = Islandora
+version = 7.x-dev
+core = 7.x
+configure = admin/islandora/tools/gmaps
+dependencies[] = islandora

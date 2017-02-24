@@ -1,0 +1,7 @@
+name = Scrape MODS for Google Maps
+description = "Grab coordinates from various MODS elements."
+package = Islandora
+version = 7.x-dev
+core = 7.x
+configure = admin/islandora/tools/gmaps/scrape_mods
+dependencies[] = islandora_gmap
