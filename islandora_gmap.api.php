@@ -44,8 +44,24 @@ function hook_islandora_gmap_form_fieldset(&$form_state) {
  *
  * @return array
  *   An array of GeoJSON Features.
+ *
+ * @see http://geojson.org/geojson-spec.html#feature-objects
  */
 function hook_islandora_gmap_gather_geojson(AbstractObject $object) {
+  $geojson = array();
+
+  $geojson[] = array(
+    'type' => 'Feature',
+    'geometry' => array(
+      'type' => 'Point',
+      'coordinates' => array(
+        -63.1245071,
+        46.2350236,
+      ),
+    ),
+  );
+
+  return $geojson;
 }
 
 /**
