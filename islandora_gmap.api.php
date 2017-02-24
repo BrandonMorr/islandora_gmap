@@ -47,3 +47,16 @@ function hook_islandora_gmap_form_fieldset(&$form_state) {
  */
 function hook_islandora_gmap_gather_geojson(AbstractObject $object) {
 }
+
+/**
+ * Permit altering of GeoJSON hook values.
+ *
+ * @param array $geojson
+ *   A reference to the array of GeoJSON features gathered.
+ * @param AbstractObject $object
+ *   The object for which GeoJSON is being gathered.
+ *
+ * @see hook_islandora_gmap_gather_geojson()
+ */
+function hook_islandora_gmap_gather_geojson_alter(array &$geojson, AbstractObject $object) {
+}
