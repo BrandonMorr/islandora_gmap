@@ -108,6 +108,7 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
   module_load_include('inc', 'islandora_gmap', 'includes/utilities');
   $mod_path = drupal_get_path('module', 'islandora_gmap');
   $geojson_info = islandora_gmap_gather_geojson($object);
+  $kml_info = islandora_gmap_gather_kml($object);
 
   $parse_zoom_constraint = function ($value) {
     return $value < 0 ?
@@ -115,7 +116,7 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
       intval($value);
   };
 
-  if ($geojson_info) {
+  if ($geojson_info || $kml_info) {
     $width = variable_get('islandora_gmap_width', '600');
     $height = variable_get('islandora_gmap_height', '600');
     $collapsed = variable_get('islandora_gmap_collapsed', TRUE);
@@ -130,10 +131,8 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
               'islandora_gmap' => array(
                 'data' => array(
                   $id => array(
-                    'geojson' => array(
-                      'type' => 'FeatureCollection',
-                      'features' => $geojson_info,
-                    ),
+                    'geojson' => $geojson_info,
+                    'kml' => $kml_info,
                     'map_settings' => array(
                       'center' => array('lat' => 0, 'lng' => 0),
                       'zoom' => intval(variable_get('islandora_gmap_initial_zoom', 10)),
@@ -194,4 +193,20 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
       'islandora_gmap' => $fieldset,
     );
   }
+}
+
+/**
+ * Gather KML documents to render on a map.
+ *
+ * @param AbstractObject $object
+ *   The object for which the KML is to be gathered.
+ *
+ * @return array
+ *   An array of associative arrays, each containing:
+ *   - type: A string containing one of "inline" or "ref", influences how
+ *     "data" is used.
+ *   - data: A string; if "type" is "inline", a complete KML document. If
+ *     "type" is "ref", then a URL which may be resolved to a KML document.
+ */
+function islandora_gmap_islandora_gmap_gather_kml(AbstractObject $object) {
 }
