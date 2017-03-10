@@ -98,7 +98,7 @@ function hook_islandora_gmap_gather_kml(AbstractObject $object) {
     <name>DGI office</name>
     <description>This is the location of the DGI office.</description>
     <Point>
-      <coordinates>46.2347037,-63.1284464</coordinates>
+      <coordinates>-63.1284464,46.2347037</coordinates>
     </Point>
   </Placemark>
 </kml>
