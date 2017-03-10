@@ -1,0 +1,61 @@
+<?php
+/**
+ * @file
+ * General hooks.
+ */
+
+const KML_DATASTREAM_SCRAPE_DEFAULT_MIMETYPE = 'application/vnd.google-earth.kml+xml';
+
+/**
+ * Implements hook_islandora_gmap_gather_kml().
+ */
+function kml_datastream_scrape_islandora_gmap_gather_kml(AbstractObject $object) {
+  $_split_parse = function ($to_parse) {
+    return drupal_map_assoc(array_filter(array_map('trim', explode("\r\n", $to_parse))));
+  };
+  $mimetypes = $_split_parse(variable_get('kml_datastream_scrape_mimetypes', KML_DATASTREAM_SCRAPE_DEFAULT_MIMETYPE));
+  $dsids = $_split_parse(variable_get('kml_datastream_scrape_dsids', ''));
+
+  $candidates = iterator_to_array($object);
+  if ($dsids) {
+    $candidates = array_intersect_key($candidates, $dsids);
+  }
+  $map_to_mime = function (AbstractDatastream $datastream) {
+    return $datastream->mimetype;
+  };
+  $candidates = array_intersect(array_map($map_to_mime, $candidates), $mimetypes);
+
+  $to_return = array();
+  foreach (array_keys($candidates) as $dsid) {
+    $to_return[] = url("islandora/object/{$object->id}/datastream/$dsid/view", array(
+      'absolute' => TRUE,
+    ));
+  }
+  return $to_return;
+}
+
+/**
+ * Implements hook_islandora_gmap_form_fieldset().
+ */
+function kml_datastream_scrape_islandora_gmap_form_fieldset(&$form_state) {
+  $base = array(
+    '#type' => 'fieldset',
+    '#title' => t('KML Datastreams'),
+  );
+
+  $base['kml_datastream_scrape_mimetypes'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Datastream MIME-types'),
+    '#description' => t('MIME-types, one per line.'),
+    '#default_value' => variable_get('kml_datastream_scrape_mimetypes', KML_DATASTREAM_SCRAPE_DEFAULT_MIMETYPE),
+    '#required' => TRUE,
+  );
+  $base['kml_datastream_scrape_dsids'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Datastream IDs'),
+    '#description' => t('The IDs to which to limit the MIME-type match. If left blank, matches will be attempted on <em>all</em> datastreams.'),
+    '#default_value' => variable_get('kml_datastream_scrape_dsids', ''),
+  );
+
+  return $base;
+}

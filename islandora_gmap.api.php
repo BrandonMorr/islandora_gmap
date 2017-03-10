@@ -84,33 +84,10 @@ function hook_islandora_gmap_gather_geojson_alter(array &$geojson, AbstractObjec
  *   The object for which the KML is to be gathered.
  *
  * @return array
- *   An array of associative arrays, each containing:
- *   - type: A string containing one of "inline" or "ref", influences how
- *     "data" is used.
- *   - data: A string; if "type" is "inline", a complete KML document. If
- *     "type" is "ref", then a URL which may be resolved to a KML document.
+ *   An array of URLs pointing at publically-accessible KML documents.
  */
 function hook_islandora_gmap_gather_kml(AbstractObject $object) {
-  $kml = <<<EOXML
-<?xml version="1.0" encoding="utf-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2">
-  <Placemark>
-    <name>DGI office</name>
-    <description>This is the location of the DGI office.</description>
-    <Point>
-      <coordinates>-63.1284464,46.2347037</coordinates>
-    </Point>
-  </Placemark>
-</kml>
-EOXML;
   return array(
-    array(
-      'type' => 'inline',
-      'data' => $kml,
-    ),
-    array(
-      'type' => 'ref',
-      'data' => 'http://googlemaps.github.io/kml-samples/kml/Placemark/placemark.kml',
-    ),
+    'http://googlemaps.github.io/kml-samples/kml/Placemark/placemark.kml',
   );
 }

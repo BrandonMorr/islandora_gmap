@@ -194,19 +194,3 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
     );
   }
 }
-
-/**
- * Gather KML documents to render on a map.
- *
- * @param AbstractObject $object
- *   The object for which the KML is to be gathered.
- *
- * @return array
- *   An array of associative arrays, each containing:
- *   - type: A string containing one of "inline" or "ref", influences how
- *     "data" is used.
- *   - data: A string; if "type" is "inline", a complete KML document. If
- *     "type" is "ref", then a URL which may be resolved to a KML document.
- */
-function islandora_gmap_islandora_gmap_gather_kml(AbstractObject $object) {
-}

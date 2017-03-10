@@ -1,5 +1,5 @@
-name = Scrape MODS for Google Maps
-description = "Grab coordinates from various MODS elements."
+name = Scrape KML datastreams for Google Maps
+description = "Grab KML datastreams to render."
 package = Islandora
 version = 7.x-dev
 core = 7.x
