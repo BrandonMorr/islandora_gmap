@@ -24,6 +24,6 @@ function _scrape_mods_to_gmap_scrape_kml(AbstractDatastream $datastream, $positi
   $doc->formatOutput = TRUE;
   $node = $doc->importNode($element, TRUE);
   $doc->appendChild($node);
-  print($doc->saveXML());
+  print $doc->saveXML();
   drupal_exit();
 }

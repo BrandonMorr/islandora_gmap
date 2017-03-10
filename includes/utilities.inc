@@ -8,7 +8,7 @@
  * Helper to invoke hooks to gather GeoJSON info for a given object.
  *
  * @param AbstractObject $object
- *  The object for which to gather GeoJSON features.
+ *   The object for which to gather GeoJSON features.
  *
  * @return array|NULL
  *   If any features were returned, an associative array wrapping them up in a

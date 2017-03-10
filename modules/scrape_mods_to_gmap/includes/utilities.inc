@@ -45,7 +45,13 @@ function _scrape_mods_to_gmap_scrape(AbstractObject $object, array $xpaths) {
 }
 
 /**
- * 
+ * Callback helper to actually parse the configured XPaths.
+ *
+ * @param AbstractDatastream $datastream
+ *   The datastream from which to scrape elements.
+ *
+ * @return DOMNode[]
+ *   An array of DOMNode instances, scraped from the datastream.
  */
 function _scrape_mods_to_gmap_get_kml_elements(AbstractDatastream $datastream) {
   $xpaths = _scrape_mods_to_gmap_parse_paths(variable_get('scrape_mods_to_gmap_kml_xpaths', SCRAPE_MODS_TO_GMAP_KML_XPATHS));
