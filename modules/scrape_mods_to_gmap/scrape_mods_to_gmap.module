@@ -107,9 +107,7 @@ function scrape_mods_to_gmap_islandora_gmap_gather_kml(AbstractObject $object) {
       'absolute' => TRUE,
     ));
   };
-  $kml = array(
-    'https://gist.githubusercontent.com/adam-vessey/617b9e25290c4b019bfdeb51e908662d/raw/0f7f88a8292e3bf9cd800fb1bb2db645cb896a55/loc.kml',
-  );
+  $kml = array();
   foreach (_scrape_mods_to_gmap_scrape($object, $xpaths) as $pos => $node) {
     $kml[] = $get_value($node, $pos);
   }
