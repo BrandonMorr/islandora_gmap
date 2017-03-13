@@ -1,0 +1,17 @@
+<?php
+/**
+ * @file
+ * (Un)installation hooks.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function kml_datastream_scrape_uninstall() {
+  $variables = array(
+    'kml_datastream_scrape_dsids',
+    'kml_datastream_scrape_models',
+    'kml_datastream_scrape_mimetypes',
+  );
+  array_map('variable_del', $variables);
+}

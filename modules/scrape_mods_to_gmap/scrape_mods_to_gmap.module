@@ -5,6 +5,7 @@
  */
 
 const SCRAPE_MODS_TO_GMAP_XPATHS = "//mods:subject/mods:cartographics/mods:coordinates\r\n//mods:subject/mods:geographic";
+const SCRAPE_MODS_TO_GMAP_KML_XPATHS = "//mods:subject/mods:cartographics/mods:cartographicExtension/*[local-name() = 'kml']";
 const SCRAPE_MODS_TO_GMAP_COORDS_REGEX = '/^[+\-]?\d+\.\d+,\s*[+\-]?\d+\.\d+?/';
 
 /**
@@ -20,6 +21,12 @@ function scrape_mods_to_gmap_islandora_gmap_form_fieldset(&$form_state) {
     '#type' => 'textarea',
     '#title' => t('Coordinate XPaths'),
     '#default_value' => variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS),
+  );
+  $base['scrape_mods_to_gmap_kml_xpaths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('KML XPaths'),
+    '#default_value' => variable_get('scrape_mods_to_gmap_kml_xpaths', SCRAPE_MODS_TO_GMAP_KML_XPATHS),
+    '#description' => t('XPaths matching the root &lt;kml/&gt; element of embedded KML documents.'),
   );
   $base['scrape_mods_to_gmap_attempt_cleanup'] = array(
     '#type' => 'checkbox',
@@ -42,28 +49,13 @@ function scrape_mods_to_gmap_islandora_gmap_form_fieldset(&$form_state) {
  * Implements hook_islandora_gmap_gather_geojson().
  */
 function scrape_mods_to_gmap_islandora_gmap_gather_geojson(AbstractObject $object) {
-  $xpaths = array_filter(array_map('trim', explode("\r\n", variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS))));
+  module_load_include('inc', 'scrape_mods_to_gmap', 'includes/utilities');
+  $xpaths = _scrape_mods_to_gmap_parse_paths(variable_get('scrape_mods_to_gmap_xpaths', SCRAPE_MODS_TO_GMAP_XPATHS));
 
-  if (!isset($object['MODS'])) {
-    return;
-  }
-
-  $doc = new DOMDocument();
-  $doc->loadXML($object['MODS']->content);
-
-  $xpath = new DOMXPath($doc);
-  // XXX: May need to expose the ability to register namespaces at some point?
-  $xpath->registerNamespace('mods', 'http://www.loc.gov/mods/v3');
-
-  $coords = array();
-
-  foreach ($xpaths as $path) {
-    $result = $xpath->query($path);
-    foreach ($result as $node) {
-      $coords[] = trim($node->nodeValue);
-    }
-  }
-
+  $get_value = function (DOMNode $node) {
+    return trim($node->nodeValue);
+  };
+  $coords = array_map($get_value, _scrape_mods_to_gmap_scrape($object, $xpaths));
   $coords = array_filter($coords);
 
   // Match two optionally-signed comma-separated floating-point numbers.
@@ -101,4 +93,49 @@ function scrape_mods_to_gmap_islandora_gmap_gather_geojson(AbstractObject $objec
   }
 
   return $to_return;
+}
+
+/**
+ * Implements hook_islandora_gmap_gather_kml().
+ */
+function scrape_mods_to_gmap_islandora_gmap_gather_kml(AbstractObject $object) {
+  module_load_include('inc', 'scrape_mods_to_gmap', 'includes/utilities');
+  $xpaths = _scrape_mods_to_gmap_parse_paths(variable_get('scrape_mods_to_gmap_kml_xpaths', SCRAPE_MODS_TO_GMAP_KML_XPATHS));
+
+  $get_value = function (DOMNode $node, $pos) use ($object) {
+    return url("islandora/object/{$object->id}/datastream/MODS/islandora_gmap_scrape_kml/$pos/loc.kml", array(
+      'absolute' => TRUE,
+    ));
+  };
+  $kml = array();
+  foreach (_scrape_mods_to_gmap_scrape($object, $xpaths) as $pos => $node) {
+    $kml[] = $get_value($node, $pos);
+  }
+  return $kml;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function scrape_mods_to_gmap_menu() {
+  $items = array();
+
+  $items['islandora/object/%islandora_object/datastream/%islandora_datastream/islandora_gmap_scrape_kml'] = array(
+    'title' => 'Scrape KML',
+    'page callback' => '_scrape_mods_to_gmap_scrape_kml',
+    'page arguments' => array(4, 6),
+    'access callback' => '_scrape_mods_to_gmap_scrape_kml_access_callback',
+    'access arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/scrape_kml.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Access callback for the KML scrape callback.
+ */
+function _scrape_mods_to_gmap_scrape_kml_access_callback($datastream) {
+  return $datastream->id == 'MODS' && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $datastream);
 }
