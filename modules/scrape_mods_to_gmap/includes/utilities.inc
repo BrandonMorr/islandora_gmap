@@ -31,7 +31,7 @@ function _scrape_mods_to_gmap_parse_paths($paths) {
  */
 function _scrape_mods_to_gmap_scrape(AbstractObject $object, array $xpaths) {
   if (!isset($object['MODS'])) {
-    return;
+    return array();
   }
 
   $doc = new DOMDocument();
