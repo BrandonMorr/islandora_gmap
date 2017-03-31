@@ -19,6 +19,10 @@ This module requires the following modules/libraries:
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
 
+## Configuration
+
+At `admin/islandora/tools/gmaps`, there is one point of required configuration: The "Google API Key", under "Basic Configuration". There are some other configuration which controls the dimensions of the map, constrains the allowed zoom levels, and adjusts the initial viewport configuration.
+
 ## Troubleshooting/Issues
 
 Having problems or solved a problem? Contact [discoverygarden](http://support.discoverygarden.ca).
