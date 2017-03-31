@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Scrapes some coordinates from MODS, in much the same manner as [mjordan](islandora_solr_metadata_description)'s [islandora_simple_map](https://github.com/mjordan/islandora_simple_map) module.
+Scrapes some coordinates from MODS, in much the same manner as [mjordan](https://github.com/mjordan)'s [islandora_simple_map](https://github.com/mjordan/islandora_simple_map) module.
 
 ## Requirements
 
