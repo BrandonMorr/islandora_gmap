@@ -4,7 +4,7 @@
 
 Facilitates the rendering of maps using the Google Maps JS API, v3.
 
-This module does not do anything on its own, but defines multiple hooks for modules to provide GeoJSON data or coordinates to KML documents. A couple submodules which may be of interest:
+This module does not do anything on its own, but defines multiple hooks which modules might implement to provide GeoJSON data or KML documents to be rendered on a map. There are a couple of submodules implementing these hooks which may be of interest:
 
 * [scrape_mods_to_gmap](https://github.com/discoverygarden/islandora_gmap/tree/7.x/modules/scrape_mods_to_gmap), to scrape data from MODS datastreams
 * [kml_datastream_scrape](https://github.com/discoverygarden/islandora_gmap/tree/7.x/modules/kml_datastream_scrape), to scrape accessible KML datastreams to be rendered
