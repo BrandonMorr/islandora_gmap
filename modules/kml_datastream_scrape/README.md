@@ -1,23 +1,24 @@
-# Islandora Google Maps
+# Scrape KML datastreams for Google Maps
 
 ## Introduction
 
-Facilitates the rendering of maps using the Google Maps JS API, v3.
-
-This module does not do anything on its own, but defines multiple hooks for modules to provide GeoJSON data or coordinates to KML documents. A couple submodules which may be of interest:
-
-* [scrape_mods_to_gmap](https://github.com/discoverygarden/islandora_gmap/tree/7.x/modules/scrape_mods_to_gmap), to scrape data from MODS datastreams
-* [kml_datastream_scrape](https://github.com/discoverygarden/islandora_gmap/tree/7.x/modules/kml_datastream_scrape), to scrape accessible KML datastreams to be rendered
+Support the use of KML datastreams in Google Maps.
 
 ## Requirements
 
 This module requires the following modules/libraries:
 
-* [Islandora](https://github.com/islandora/islandora)
+* [Islandora Google Maps](https://github.com/discoverygarden/islandora_gmap)
 
 ## Installation
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
+
+## Configuration
+
+In the admin form at `admin/islandora/tools/gmaps` in the "KML Datastreams" tab, the criteria to match datastreams can be modified; by default, we look for any datastream with the `application/vnd.google-earth.kml+xml` MIME-type.
+
+If desired, matching may be additionally constrained to particular datastream identifiers and/or on objects of particular content models.
 
 ## Troubleshooting/Issues
 
