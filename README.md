@@ -4,6 +4,11 @@
 
 Facilitates the rendering of maps using the Google Maps JS API, v3.
 
+This module does not do anything on its own, but defines multiple hooks which modules might implement to provide GeoJSON data or KML documents to be rendered on a map. There are a couple of submodules implementing these hooks which may be of interest:
+
+* [scrape_mods_to_gmap](https://github.com/discoverygarden/islandora_gmap/tree/7.x/modules/scrape_mods_to_gmap), to scrape data from MODS datastreams
+* [kml_datastream_scrape](https://github.com/discoverygarden/islandora_gmap/tree/7.x/modules/kml_datastream_scrape), to scrape accessible KML datastreams to be rendered
+
 ## Requirements
 
 This module requires the following modules/libraries:
@@ -13,6 +18,12 @@ This module requires the following modules/libraries:
 ## Installation
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
+
+## Configuration
+
+At `admin/islandora/tools/gmaps`, there is one point of required configuration: The "Google API Key", under "Basic Configuration".
+
+There is some other general configuration which controls the dimensions of the map, constrains the allowed zoom levels, and adjusts the initial viewport configuration.
 
 ## Troubleshooting/Issues
 
