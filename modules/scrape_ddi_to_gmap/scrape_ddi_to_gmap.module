@@ -1,0 +1,157 @@
+<?php
+/**
+ * @file
+ * General hook implementations.
+ */
+
+const SCRAPE_DDI_TO_GMAP_LAT_XPATHS = "//stdyDscr/sumDscr/boundPoly/polygon/point/gringLat";
+const SCRAPE_DDI_TO_GMAP_LON_XPATHS = "//stdyDscr/sumDscr/boundPoly/polygon/point/gringLon";
+const SCRAPE_DDI_TO_GMAP_KML_XPATHS = "//stdyDscr/sumDscr/geogCover/*[local-name() = 'kml']";
+const SCRAPE_DDI_TO_GMAP_COORDS_REGEX = '/^[+\-]?\d+\.\d+?/';
+
+/**
+ * Implements hook_islandora_gmap_form_fieldset().
+ */
+function scrape_ddi_to_gmap_islandora_gmap_form_fieldset(&$form_state) {
+  $base = array(
+    '#type' => 'fieldset',
+    '#title' => t('DDI Scrape'),
+  );
+
+  $base['scrape_ddi_to_gmap_lat_xpaths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Latitude XPaths'),
+    '#default_value' => variable_get('scrape_ddi_to_gmap_lat_xpaths', SCRAPE_DDI_TO_GMAP_LAT_XPATHS),
+  );
+  $base['scrape_ddi_to_gmap_lon_xpaths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Longitude XPaths'),
+    '#default_value' => variable_get('scrape_ddi_to_gmap_long_xpaths', SCRAPE_DDI_TO_GMAP_LON_XPATHS),
+  );
+  $base['scrape_ddi_to_gmap_kml_xpaths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('KML XPaths'),
+    '#default_value' => variable_get('scrape_ddi_to_gmap_kml_xpaths', SCRAPE_DDI_TO_GMAP_KML_XPATHS),
+    '#description' => t('XPaths matching the root &lt;kml/&gt; element of embedded KML documents.'),
+  );
+  $base['scrape_ddi_to_gmap_attempt_cleanup'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Attempt cleanup?'),
+    '#default_value' => variable_get('scrape_ddi_to_gmap_attempt_cleanup', FALSE),
+    '#description' => t('Ideally, values should be signed floating-point numbers indicating latitude and longitude respectively... Attempt some parsing to match expectations.'),
+  );
+  $base['scrape_ddi_to_gmap_fallback_to_search'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Search fallback?'),
+    '#default_value' => variable_get('scrape_ddi_to_gmap_fallback_to_search', FALSE),
+    '#description' => t('To support more human-readable values, such as "Charlottetown, PE, Canada", fallback to passing non-coordinate data as a text search to <a href="@api_url">Google Places API</a>. Notice the reference in the API documentation regarding higher (10-times) API quota usage.', array(
+      '@api_url' => 'https://developers.google.com/places/web-service/search#TextSearchRequests',
+    )),
+  );
+  return $base;
+}
+
+/**
+ * Implements hook_islandora_gmap_gather_geojson().
+ */
+function scrape_ddi_to_gmap_islandora_gmap_gather_geojson(AbstractObject $object) {
+  module_load_include('inc', 'scrape_ddi_to_gmap', 'includes/utilities');
+  $lat_xpaths = _scrape_ddi_to_gmap_parse_paths(variable_get('scrape_ddi_to_gmap_lat_xpaths', SCRAPE_DDI_TO_GMAP_LAT_XPATHS));
+  $lon_xpaths = _scrape_ddi_to_gmap_parse_paths(variable_get('scrape_ddi_to_gmap_lon_xpaths', SCRAPE_DDI_TO_GMAP_LON_XPATHS));
+
+  $get_value = function (DOMNode $node) {
+    return trim($node->nodeValue);
+  };
+  $lat = array_map($get_value, _scrape_ddi_to_gmap_scrape($object, $lat_xpaths));
+  $lon = array_map($get_value, _scrape_ddi_to_gmap_scrape($object, $lon_xpaths));
+  $lat = array_filter($lat);
+  $lon = array_filter($lon);
+
+  // Match two optionally-signed comma-separated floating-point numbers.
+  $good_lat = preg_grep(SCRAPE_DDI_TO_GMAP_COORDS_REGEX, $lat);
+  $good_lon = preg_grep(SCRAPE_DDI_TO_GMAP_COORDS_REGEX, $lon);
+  $cleanup = variable_get('scrape_ddi_to_gmap_attempt_cleanup', FALSE);
+  $search = variable_get('scrape_ddi_to_gmap_fallback_to_search', FALSE);
+
+  $bad_lat = ($cleanup || $search) ?
+    drupal_map_assoc(array_diff($lat, $good_lat)) :
+    FALSE;
+  $bad_lon = ($cleanup || $search) ?
+    drupal_map_assoc(array_diff($lon, $good_lon)) :
+    FALSE;
+
+  if ($bad_lat && $bad_lon && $cleanup) {
+    $now_good_lat = preg_grep(SCRAPE_DDI_TO_GMAP_COORDS_REGEX, $bad_lat);
+    $now_good_lon = preg_grep(SCRAPE_DDI_TO_GMAP_COORDS_REGEX, $bad_lon);
+    $bad_lat = array_diff_key($bad_lat, $now_good_lat);
+    $bad_lon = array_diff_key($bad_lon, $now_good_lon);
+    $good_lat = array_merge($good_lat, $now_good_lat);
+    $good_lon = array_merge($good_lon, $now_good_lon);
+  }
+
+  $to_return = array_map(function ($lat, $lon) {
+    return array(
+      'type' => 'Feature',
+      'geometry' => array(
+        'type' => 'Point',
+        'coordinates' => array($lat, $lon),
+      ),
+    );
+  }, $good_lat, $good_lon);
+
+  if ($bad_lat && $bad_lon && $search) {
+    module_load_include('inc', 'scrape_ddi_to_gmap', 'includes/places');
+    $bad_coords = array($bad_lat, $bad_lon);
+    $searched = scrape_ddi_to_gmap_search_fallback($bad_coords);
+    if ($searched) {
+      $to_return = array_merge($to_return, array_values($searched));
+    }
+  }
+
+  return $to_return;
+}
+
+/**
+ * Implements hook_islandora_gmap_gather_kml().
+ */
+function scrape_ddi_to_gmap_islandora_gmap_gather_kml(AbstractObject $object) {
+  module_load_include('inc', 'scrape_ddi_to_gmap', 'includes/utilities');
+  $xpaths = _scrape_ddi_to_gmap_parse_paths(variable_get('scrape_ddi_to_gmap_kml_xpaths', SCRAPE_DDI_TO_GMAP_KML_XPATHS));
+
+  $get_value = function (DOMNode $node, $pos) use ($object) {
+    return url("islandora/object/{$object->id}/datastream/DDI/islandora_gmap_scrape_kml/$pos/loc.kml", array(
+      'absolute' => TRUE,
+    ));
+  };
+  $kml = array();
+  foreach (_scrape_ddi_to_gmap_scrape($object, $xpaths) as $pos => $node) {
+    $kml[] = $get_value($node, $pos);
+  }
+  return $kml;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function scrape_ddi_to_gmap_menu() {
+  $items = array();
+
+  $items['islandora/object/%islandora_object/datastream/%islandora_datastream/islandora_gmap_scrape_kml'] = array(
+    'title' => 'Scrape KML',
+    'page callback' => '_scrape_ddi_to_gmap_scrape_kml',
+    'page arguments' => array(4, 6),
+    'access callback' => '_scrape_ddi_to_gmap_scrape_kml_access_callback',
+    'access arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/scrape_kml.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Access callback for the KML scrape callback.
+ */
+function _scrape_ddi_to_gmap_scrape_kml_access_callback($datastream) {
+  return $datastream->id == 'DDI' && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $datastream);
+}
