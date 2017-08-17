@@ -36,7 +36,6 @@ function _scrape_ddi_to_gmap_scrape(AbstractObject $object, array $xpaths) {
 
   $doc = new DOMDocument();
   $doc->loadXML($object['DDI']->content);
-
   $xpath = new DOMXPath($doc);
 
   return call_user_func_array('array_merge', array_map('iterator_to_array', array_map(array($xpath, 'query'), $xpaths)));
