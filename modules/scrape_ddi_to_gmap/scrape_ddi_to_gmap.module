@@ -94,7 +94,7 @@ function scrape_ddi_to_gmap_islandora_gmap_gather_geojson(AbstractObject $object
       'type' => 'Feature',
       'geometry' => array(
         'type' => 'Point',
-        'coordinates' => array($lon, $lat),
+        'coordinates' => array(floatval($lon), floatval($lat)),
       ),
     );
   }, $good_lat, $good_lon);
