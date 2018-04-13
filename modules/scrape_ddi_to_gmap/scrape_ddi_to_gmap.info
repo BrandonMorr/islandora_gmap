@@ -1,0 +1,7 @@
+name = Scrape DDI for Google Maps
+description = "Grab coordinates from various DDI elements."
+package = Islandora
+version = 7.x-dev
+core = 7.x
+configure = admin/islandora/tools/gmaps
+dependencies[] = islandora_gmap
