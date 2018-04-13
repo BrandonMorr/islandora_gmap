@@ -26,9 +26,11 @@ The "fallback to search" option will forward anything which does not appear to b
 
 ## Maintainers/Sponsors
 
+Developed by [Alex Garnett](https://github.com/axfelix).
+
 Current maintainers:
 
-* Alex Garnett
+* [discoverygarden](http://www.discoverygarden.ca)
 
 ## License
 
