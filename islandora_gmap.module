@@ -175,7 +175,7 @@ function islandora_gmap_map_view($geojson_info, $kml_info) {
             ),
           ),
           "$mod_path/js/map.js",
-          "$markerclusterer_path/markerclusterer.js",
+          "$markerclusterer_path/src/markerclusterer.js",
           array(
             'type' => 'external',
             'data' => url('//maps.googleapis.com/maps/api/js', array(
