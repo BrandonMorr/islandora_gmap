@@ -103,6 +103,14 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
       '@url' => 'https://developers.google.com/maps/documentation/javascript/get-api-key',
     )),
   );
+  $base['islandora_gmap_server_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Google Server Key'),
+    '#default_value' => variable_get('islandora_gmap_server_key'),
+    '#description' => t('Server API key for access to the "places" API. See <a href=@url">Google documentation</a> for details.', array(
+      '@url' => 'https://developers.google.com/places/web-service/get-api-key',
+    )),
+  );
 
   return $base;
 }
