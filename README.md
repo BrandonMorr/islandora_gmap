@@ -26,7 +26,7 @@ Install this module as usual, see [this](https://drupal.org/documentation/instal
 
 At `admin/islandora/tools/gmaps`, there is one point of required configuration: The "Google API Key", under "Basic Configuration".
 
-There is some other general configuration which controls the dimensions of the map, allows point clustering, constrains the allowed zoom levels, and adjusts the initial viewport configuration.
+There is some other general configuration which controls the dimensions of the map, allows point clustering, allows information boxes for points, constrains the allowed zoom levels, and adjusts the initial viewport configuration.
 
 ## Troubleshooting/Issues
 

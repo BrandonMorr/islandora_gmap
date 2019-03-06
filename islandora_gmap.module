@@ -59,6 +59,12 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
     '#default_value' => variable_get('islandora_gmap_cluster_points', FALSE),
     '#description' => t('Whether to cluster point markers on the map.'),
   );
+  $base['islandora_gmap_show_point_info'] = array(
+    '#title' => t('Show Point Info'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('islandora_gmap_show_point_info', FALSE),
+    '#description' => t('On clicking, show a window with information about the point.'),
+  );
   $base['islandora_gmap_map_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Data settings'),
@@ -162,6 +168,7 @@ function islandora_gmap_map_view($geojson_info, $kml_info) {
                     'geojson' => $geojson_info,
                     'kml' => $kml_info,
                     'cluster_points' => variable_get('islandora_gmap_cluster_points', FALSE),
+                    'show_point_info' => variable_get('islandora_gmap_show_point_info', FALSE),
                     'map_settings' => array(
                       'center' => array('lat' => 0, 'lng' => 0),
                       'zoom' => intval(variable_get('islandora_gmap_initial_zoom', 10)),

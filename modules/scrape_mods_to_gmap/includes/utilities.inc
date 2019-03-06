@@ -57,3 +57,22 @@ function _scrape_mods_to_gmap_get_kml_elements(AbstractDatastream $datastream) {
   $xpaths = _scrape_mods_to_gmap_parse_paths(variable_get('scrape_mods_to_gmap_kml_xpaths', SCRAPE_MODS_TO_GMAP_KML_XPATHS));
   return _scrape_mods_to_gmap_scrape($datastream->parent, $xpaths);
 }
+
+/**
+ * Helper to return geojson properties for an object.
+ */
+function _scrape_mods_to_gmap_get_object_properties(AbstractObject $object) {
+
+  $properties = array(
+    'label' => $object->label,
+    'pid' => $object->id,
+  );
+
+  $description_nodes = _scrape_mods_to_gmap_scrape($object, array(variable_get('scrape_mods_to_gmap_description_xpath')));
+  if ($description_nodes) {
+    $properties['description'] = trim($description_nodes[0]->nodeValue);
+  }
+
+  dpm($properties, 'in util code');
+  return $properties;
+}

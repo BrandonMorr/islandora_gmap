@@ -30,6 +30,13 @@
 
       info.bounds = new google.maps.LatLngBounds();
 
+      if (info.show_point_info) {
+        var boxText = document.createElement("div");
+        var infoWindow = new google.maps.InfoWindow({
+          content: boxText
+        });
+      }
+
       map.data.addListener('addfeature', function (f_evt) {
         f_evt.feature.getGeometry().forEachLatLng(function (latlng) {
           info.bounds.extend(latlng);
@@ -39,9 +46,35 @@
           title: f_evt.feature.getProperty('name'),
           map: map
         });
+
         if (info.cluster_points) {
           markerClusterer.addMarker(marker);
         }
+
+        if (info.show_point_info) {
+          google.maps.event.addListener(marker, 'click', function (marker, f_evt) {
+            return function() {
+              var label = f_evt.feature.getProperty('label');
+              var pid = f_evt.feature.getProperty('pid');
+              var description = f_evt.feature.getProperty('description');
+              var boxHTML = '';
+              if (label != null) {
+                boxHTML += "<b>" + label + "</b>";
+              }
+              if (description != null) {
+                boxHTML += "<p>" + description + "</p>";
+              }
+              if (pid != null) {
+                boxHTML += "<p><a href=/islandora/object/" + pid + ">" + pid + "</a></p>";
+              }
+              if (boxHTML) {
+                boxText.innerHTML = "<div style='text-align:center;'>" + boxHTML + "</div";
+                infoWindow.open(map, marker);
+              }
+            };
+          }(marker, f_evt));
+        }
+
         Drupal.islandora_gmap.recenterMap(map, info);
       });
 

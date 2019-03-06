@@ -39,6 +39,10 @@ function hook_islandora_gmap_form_fieldset(&$form_state) {
 /**
  * Gather GeoJSON Feature objects for rendering on a map for the given object.
  *
+ * Can optionally return a `properties` array in the geojson feature with
+ * 'label', 'pid' and 'description' keys; these will be used in infobox
+ * windows if `islandora_gmap_show_point_info` is turned on.
+ *
  * @param AbstractObject $object
  *   The object for which to gather GeoJSON Features.
  *
@@ -58,6 +62,11 @@ function hook_islandora_gmap_gather_geojson(AbstractObject $object) {
         -63.1245071,
         46.2350236,
       ),
+    ),
+    'properties' => array(
+      'label' => 'My Object Label',
+      'pid' => 'my:coolpid',
+      'description' => 'Sweet object description.',
     ),
   );
 
