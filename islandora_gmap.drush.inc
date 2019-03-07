@@ -4,6 +4,7 @@
  * @file
  * Drush integration for islandora_gmap.
  */
+
 const JS_UTILITY_DOWNLOAD_URI = 'https://github.com/googlemaps/v3-utility-library/archive/master.zip';
 const MARKERCLUSTERER_ORIGINAL_DIR = 'markerclusterer';
 
@@ -48,7 +49,6 @@ function drush_gmap_markerclusterer_plugin() {
   chdir($path);
 
   // Download the zip archive.
-  // TODO figure out dir stuff
   if ($filepath = drush_download_file(JS_UTILITY_DOWNLOAD_URI)) {
     $filename = basename($filepath);
 

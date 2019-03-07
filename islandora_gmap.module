@@ -135,7 +135,7 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
  * Build up the map using the gmap API.
  *
  * @param array|null $geojson_info
- *   The geojson array
+ *   The geojson array.
  * @param array|null $kml_info
  *   The kml info.
  */

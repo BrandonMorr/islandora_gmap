@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Hook documentation.
@@ -15,7 +16,7 @@
  *   child elements) will be used to create variables... These variables should
  *   be uninstalled in the modules creating them.
  */
-function hook_islandora_gmap_form_fieldset(&$form_state) {
+function hook_islandora_gmap_form_fieldset(array &$form_state) {
   $base = array(
     '#type' => 'fieldset',
     '#title' => t('My awesome config'),

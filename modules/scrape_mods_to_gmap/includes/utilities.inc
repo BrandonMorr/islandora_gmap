@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Helper functions.
@@ -73,6 +74,5 @@ function _scrape_mods_to_gmap_get_object_properties(AbstractObject $object) {
     $properties['description'] = trim($description_nodes[0]->nodeValue);
   }
 
-  dpm($properties, 'in util code');
   return $properties;
 }

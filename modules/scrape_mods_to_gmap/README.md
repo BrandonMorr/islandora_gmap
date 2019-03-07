@@ -16,13 +16,22 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 
 ## Configuration
 
-"Coordinate XPaths" from which to scrape can be configured, one per line. By default, they should contain only coordinate data as pairs of signed floating point numbers separated by a comma, each indicating latitude and longitude in degrees.
+"Coordinate XPaths" from which to scrape can be configured, one per line. By
+default, they should contain only coordinate data as pairs of signed floating
+point numbers separated by a comma, each indicating latitude and longitude in
+degrees.
 
-"KML XPaths" allows for KML documents embedded inside MODS documents to be extracted for use in Google Maps.
+"KML XPaths" allows for KML documents embedded inside MODS documents to be
+extracted for use in Google Maps.
 
-The "attempt cleanup" option presently permits a semi-colon instead of a comma to be used (legacy functionality, mirroring islandora_simple_map).
+The "attempt cleanup" option presently permits a semi-colon instead of a comma
+to be used (legacy functionality, mirroring islandora_simple_map).
 
-The "fallback to search" option will forward anything which does not appear to be coordinate data off as a query against the [Google Places API](https://developers.google.com/places/web-service/search#TextSearchRequests); off by default to avoid the associated increased (10-times normal) API quota usage.
+The "fallback to search" option will forward anything which does not appear to
+be coordinate data off as a query against the
+[Google Places API](https://developers.google.com/places/web-service/search#TextSearchRequests);
+off by default to avoid the associated increased (10-times normal) API quota
+usage.
 
 ## Troubleshooting/Issues
 
