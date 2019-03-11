@@ -40,10 +40,6 @@ function hook_islandora_gmap_form_fieldset(array &$form_state) {
 /**
  * Gather GeoJSON Feature objects for rendering on a map for the given object.
  *
- * Can optionally return a `properties` array in the geojson feature with
- * 'label', 'pid' and 'description' keys; these will be used in infobox
- * windows if `islandora_gmap_show_point_info` is turned on.
- *
  * @param AbstractObject $object
  *   The object for which to gather GeoJSON Features.
  *
@@ -64,11 +60,6 @@ function hook_islandora_gmap_gather_geojson(AbstractObject $object) {
         46.2350236,
       ),
     ),
-    'properties' => array(
-      'label' => 'My Object Label',
-      'pid' => 'my:coolpid',
-      'description' => 'Sweet object description.',
-    ),
   );
 
   return $geojson;
@@ -85,6 +76,7 @@ function hook_islandora_gmap_gather_geojson(AbstractObject $object) {
  * @see hook_islandora_gmap_gather_geojson()
  */
 function hook_islandora_gmap_gather_geojson_alter(array &$geojson, AbstractObject $object) {
+
 }
 
 /**
@@ -100,4 +92,22 @@ function hook_islandora_gmap_gather_kml(AbstractObject $object) {
   return array(
     'http://googlemaps.github.io/kml-samples/kml/Placemark/placemark.kml',
   );
+}
+
+/**
+ * Gather metadata information for displaying on a given object.
+ *
+ * @param AbstractObject $object
+ *   The object for which metadata is gathered.
+ *
+ * @return array
+ *   An associative array with metadata information.
+ */
+function hook_islandora_gmap_gather_metadata(AbstractObject $object) {
+  return array(
+    'pid' => 'my:coolpid',
+    'label' => 'My Object Label',
+    'description' => 'Sweet object description.',
+  );
+
 }

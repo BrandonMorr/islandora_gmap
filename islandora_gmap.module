@@ -128,7 +128,7 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
   module_load_include('inc', 'islandora_gmap', 'includes/utilities');
   $geojson_info = islandora_gmap_gather_geojson($object);
   $kml_info = islandora_gmap_gather_kml($object);
-  return islandora_gmap_map_view($geojson_info, $kml_info);
+  return islandora_gmap_map_view($object, $geojson_info, $kml_info);
 }
 
 /**
@@ -139,7 +139,7 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
  * @param array|null $kml_info
  *   The kml info.
  */
-function islandora_gmap_map_view($geojson_info, $kml_info) {
+function islandora_gmap_map_view($object, $geojson_info, $kml_info) {
   module_load_include('inc', 'islandora_gmap', 'includes/utilities');
   $mod_path = drupal_get_path('module', 'islandora_gmap');
 
@@ -210,6 +210,26 @@ function islandora_gmap_map_view($geojson_info, $kml_info) {
       $markerclusterer_path = libraries_get_path('markerclusterer');
       $renderable['#attached']['js'][] = "$markerclusterer_path/src/markerclusterer.js";
     }
+    if (variable_get('islandora_gmap_show_point_info', FALSE)) {
+      $infobox_html = theme('islandora_gmap_infobox', array(
+        'islandora_object' => $object,
+      ));
+
+      drupal_array_set_nested_value(
+        $renderable,
+        array(
+          '#attached',
+          'js',
+          0,
+          'data',
+          'islandora_gmap',
+          'data',
+          $id,
+          'infobox_html',
+        ),
+        $infobox_html
+      );
+    }
 
     $fieldset = array(
       '#attached' => array(
@@ -233,4 +253,18 @@ function islandora_gmap_map_view($geojson_info, $kml_info) {
       'islandora_gmap' => $fieldset,
     );
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function islandora_gmap_theme() {
+  return array(
+    'islandora_gmap_infobox' => array(
+      'file' => 'theme/theme.inc',
+      'template' => 'theme/islandora-gmap-infobox',
+      'pattern' => 'islandora_gmap_infobox__',
+      'variables' => array('islandora_object' => NULL),
+    ),
+  );
 }

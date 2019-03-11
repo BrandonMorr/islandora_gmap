@@ -54,23 +54,8 @@
         if (info.show_point_info) {
           google.maps.event.addListener(marker, 'click', function (marker, f_evt) {
             return function() {
-              var label = f_evt.feature.getProperty('label');
-              var pid = f_evt.feature.getProperty('pid');
-              var description = f_evt.feature.getProperty('description');
-              var boxHTML = '';
-              if (label != null) {
-                boxHTML += "<b>" + label + "</b>";
-              }
-              if (description != null) {
-                boxHTML += "<p>" + description + "</p>";
-              }
-              if (pid != null) {
-                boxHTML += "<p><a href=/islandora/object/" + pid + ">" + pid + "</a></p>";
-              }
-              if (boxHTML) {
-                boxText.innerHTML = "<div style='text-align:center;'>" + boxHTML + "</div>";
-                infoWindow.open(map, marker);
-              }
+              boxText.innerHTML = info.infobox_html;
+              infoWindow.open(map, marker);
             };
           }(marker, f_evt));
         }

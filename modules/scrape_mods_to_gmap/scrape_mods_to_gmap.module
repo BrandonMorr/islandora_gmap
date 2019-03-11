@@ -100,14 +100,6 @@ function scrape_mods_to_gmap_islandora_gmap_gather_geojson(AbstractObject $objec
     }
   }
 
-  // Add some object properties to the geojson.
-  if (variable_get('islandora_gmap_show_point_info')) {
-    $properties = _scrape_mods_to_gmap_get_object_properties($object);
-    foreach ($to_return as &$point) {
-      $point['properties'] = $properties;
-    }
-  }
-
   return $to_return;
 }
 
@@ -154,4 +146,17 @@ function scrape_mods_to_gmap_menu() {
  */
 function _scrape_mods_to_gmap_scrape_kml_access_callback($datastream) {
   return $datastream->id == 'MODS' && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $datastream);
+}
+
+/**
+ * Implements MODULE_preprocess_HOOK().
+ */
+function scrape_mods_to_gmap_preprocess_islandora_gmap_infobox(&$variables) {
+  // Add the object's description to the infobox body.
+  module_load_include('inc', 'scrape_mods_to_gmap', 'includes/utilities');
+  $islandora_object = $variables['islandora_object'];
+  $description = _scrape_mods_to_gmap_get_object_description($islandora_object);
+  if ($description) {
+    $variables['islandora_gmap_infobox_body'] .= "<p>$description</p>";
+  }
 }
