@@ -68,7 +68,7 @@
                 boxHTML += "<p><a href=/islandora/object/" + pid + ">" + pid + "</a></p>";
               }
               if (boxHTML) {
-                boxText.innerHTML = "<div style='text-align:center;'>" + boxHTML + "</div";
+                boxText.innerHTML = "<div style='text-align:center;'>" + boxHTML + "</div>";
                 infoWindow.open(map, marker);
               }
             };
