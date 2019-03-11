@@ -5,8 +5,8 @@
  * Drush integration for islandora_gmap.
  */
 
-const JS_UTILITY_DOWNLOAD_URI = 'https://github.com/googlemaps/v3-utility-library/archive/master.zip';
-const MARKERCLUSTERER_ORIGINAL_DIR = 'markerclusterer';
+const ISLANDORA_GMAP_JS_UTILITY_DOWNLOAD_URI = 'https://github.com/googlemaps/v3-utility-library/archive/master.zip';
+const ISLANDORA_GMAP_MARKERCLUSTERER_ORIGINAL_DIR = 'markerclusterer';
 
 /**
  * Implements hook_drush_command().
@@ -49,14 +49,14 @@ function drush_gmap_markerclusterer_plugin() {
   chdir($path);
 
   // Download the zip archive.
-  if ($filepath = drush_download_file(JS_UTILITY_DOWNLOAD_URI)) {
+  if ($filepath = drush_download_file(ISLANDORA_GMAP_JS_UTILITY_DOWNLOAD_URI)) {
     $filename = basename($filepath);
 
     // Decompress the zip archive into the cwd.
     drush_tarball_extract($filename);
 
     // Remove any existing markerclusterer plugin directory.
-    $dirname = MARKERCLUSTERER_ORIGINAL_DIR;
+    $dirname = ISLANDORA_GMAP_MARKERCLUSTERER_ORIGINAL_DIR;
     $pathdir = $path . '/' . $dirname;
     if (is_dir($dirname) || is_dir('markerclusterer')) {
       drush_delete_dir($dirname, TRUE);
