@@ -103,7 +103,7 @@ function scrape_mods_to_gmap_islandora_gmap_gather_geojson(AbstractObject $objec
   // Add some object properties to the geojson.
   if (variable_get('islandora_gmap_show_point_info')) {
     $properties = _scrape_mods_to_gmap_get_object_properties($object);
-    foreach ($to_return as $point) {
+    foreach ($to_return as &$point) {
       $point['properties'] = $properties;
     }
   }
