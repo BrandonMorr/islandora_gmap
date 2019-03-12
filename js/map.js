@@ -22,17 +22,50 @@
       var map = new google.maps.Map($map.get(0), info.map_settings);
       Drupal.islandora_gmap.maps[id] = map;
 
+      if (info.cluster_points) {
+        var markerClusterer = new MarkerClusterer(map, null, {imagePath:
+          Drupal.settings.basePath+'sites/all/libraries/markerclusterer/images/m'
+        });
+      }
+
       info.bounds = new google.maps.LatLngBounds();
+
+      if (info.show_point_info) {
+        var boxText = document.createElement("div");
+        var infoWindow = new google.maps.InfoWindow({
+          content: boxText
+        });
+      }
 
       map.data.addListener('addfeature', function (f_evt) {
         f_evt.feature.getGeometry().forEachLatLng(function (latlng) {
           info.bounds.extend(latlng);
         });
+        var marker = new google.maps.Marker({
+          position: f_evt.feature.getGeometry().get(),
+          title: f_evt.feature.getProperty('name'),
+          map: map
+        });
+
+        if (info.cluster_points) {
+          markerClusterer.addMarker(marker);
+        }
+
+        if (info.show_point_info) {
+          google.maps.event.addListener(marker, 'click', function (marker, f_evt) {
+            return function() {
+              boxText.innerHTML = info.infobox_html;
+              infoWindow.open(map, marker);
+            };
+          }(marker, f_evt));
+        }
+
         Drupal.islandora_gmap.recenterMap(map, info);
       });
 
       if (info.geojson != null) {
         map.data.addGeoJson(info.geojson);
+        map.data.setMap(null);
       }
 
       $.each(info.kml, function (kid, url) {

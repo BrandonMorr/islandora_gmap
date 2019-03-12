@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * (Un)installation hooks.
@@ -12,6 +13,8 @@ function islandora_gmap_uninstall() {
     'islandora_gmap_collapsed',
     'islandora_gmap_width',
     'islandora_gmap_height',
+    'islandora_gmap_cluster_points',
+    'islandora_gmap_show_point_info',
     'islandora_gmap_initial_zoom',
     'islandora_gmap_min_zoom',
     'islandora_gmap_max_zoom',

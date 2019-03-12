@@ -53,6 +53,18 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
     '#default_value' => variable_get('islandora_gmap_height', '600'),
     '#description' => t('The height, in pixels, of the map. May be overridden with CSS.'),
   );
+  $base['islandora_gmap_cluster_points'] = array(
+    '#title' => t('Cluster points'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('islandora_gmap_cluster_points', FALSE),
+    '#description' => t('Whether to cluster point markers on the map.'),
+  );
+  $base['islandora_gmap_show_point_info'] = array(
+    '#title' => t('Show Point Info'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('islandora_gmap_show_point_info', FALSE),
+    '#description' => t('On clicking, show a window with information about the point.'),
+  );
   $base['islandora_gmap_map_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Data settings'),
@@ -97,6 +109,14 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
       '@url' => 'https://developers.google.com/maps/documentation/javascript/get-api-key',
     )),
   );
+  $base['islandora_gmap_server_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Google Server Key'),
+    '#default_value' => variable_get('islandora_gmap_server_key'),
+    '#description' => t('Server API key for access to the "places" API. See <a href=@url">Google documentation</a> for details.', array(
+      '@url' => 'https://developers.google.com/places/web-service/get-api-key',
+    )),
+  );
 
   return $base;
 }
@@ -106,9 +126,22 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
  */
 function islandora_gmap_islandora_view_object(AbstractObject $object) {
   module_load_include('inc', 'islandora_gmap', 'includes/utilities');
-  $mod_path = drupal_get_path('module', 'islandora_gmap');
   $geojson_info = islandora_gmap_gather_geojson($object);
   $kml_info = islandora_gmap_gather_kml($object);
+  return islandora_gmap_map_view($object, $geojson_info, $kml_info);
+}
+
+/**
+ * Build up the map using the gmap API.
+ *
+ * @param array|null $geojson_info
+ *   The geojson array.
+ * @param array|null $kml_info
+ *   The kml info.
+ */
+function islandora_gmap_map_view($object, $geojson_info, $kml_info) {
+  module_load_include('inc', 'islandora_gmap', 'includes/utilities');
+  $mod_path = drupal_get_path('module', 'islandora_gmap');
 
   $parse_zoom_constraint = function ($value) {
     return $value < 0 ?
@@ -133,6 +166,8 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
                   $id => array(
                     'geojson' => $geojson_info,
                     'kml' => $kml_info,
+                    'cluster_points' => variable_get('islandora_gmap_cluster_points', FALSE),
+                    'show_point_info' => variable_get('islandora_gmap_show_point_info', FALSE),
                     'map_settings' => array(
                       'center' => array('lat' => 0, 'lng' => 0),
                       'zoom' => intval(variable_get('islandora_gmap_initial_zoom', 10)),
@@ -171,6 +206,31 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
       '#markup' => t('Map loading...'),
     );
 
+    if (variable_get('islandora_gmap_cluster_points', FALSE)) {
+      $markerclusterer_path = libraries_get_path('markerclusterer');
+      $renderable['#attached']['js'][] = "$markerclusterer_path/src/markerclusterer.js";
+    }
+    if (variable_get('islandora_gmap_show_point_info', FALSE)) {
+      $infobox_html = theme('islandora_gmap_infobox', array(
+        'islandora_object' => $object,
+      ));
+
+      drupal_array_set_nested_value(
+        $renderable,
+        array(
+          '#attached',
+          'js',
+          0,
+          'data',
+          'islandora_gmap',
+          'data',
+          $id,
+          'infobox_html',
+        ),
+        $infobox_html
+      );
+    }
+
     $fieldset = array(
       '#attached' => array(
         'js' => array(
@@ -193,4 +253,18 @@ function islandora_gmap_islandora_view_object(AbstractObject $object) {
       'islandora_gmap' => $fieldset,
     );
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function islandora_gmap_theme() {
+  return array(
+    'islandora_gmap_infobox' => array(
+      'file' => 'theme/theme.inc',
+      'template' => 'theme/islandora-gmap-infobox',
+      'pattern' => 'islandora_gmap_infobox__',
+      'variables' => array('islandora_object' => NULL),
+    ),
+  );
 }

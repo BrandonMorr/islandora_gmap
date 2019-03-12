@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Callback for search.
@@ -29,7 +30,7 @@ function scrape_mods_to_gmap_search_fallback(array $bad_coords) {
 function _scrape_mods_to_gmap_lookup($coord) {
   $response = drupal_http_request(url('https://maps.googleapis.com/maps/api/place/textsearch/json', array(
     'query' => array(
-      'key' => variable_get('islandora_gmap_api_key'),
+      'key' => variable_get('islandora_gmap_server_key'),
       'query' => $coord,
     ),
     'external' => TRUE,

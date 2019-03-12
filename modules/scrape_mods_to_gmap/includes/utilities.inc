@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Helper functions.
@@ -56,4 +57,15 @@ function _scrape_mods_to_gmap_scrape(AbstractObject $object, array $xpaths) {
 function _scrape_mods_to_gmap_get_kml_elements(AbstractDatastream $datastream) {
   $xpaths = _scrape_mods_to_gmap_parse_paths(variable_get('scrape_mods_to_gmap_kml_xpaths', SCRAPE_MODS_TO_GMAP_KML_XPATHS));
   return _scrape_mods_to_gmap_scrape($datastream->parent, $xpaths);
+}
+
+/**
+ * Helper to return description for an object.
+ */
+function _scrape_mods_to_gmap_get_object_description(AbstractObject $object) {
+  $description_nodes = _scrape_mods_to_gmap_scrape($object, array(variable_get('scrape_mods_to_gmap_description_xpath')));
+  if ($description_nodes) {
+    $description = trim($description_nodes[0]->nodeValue);
+    return $description;
+  }
 }

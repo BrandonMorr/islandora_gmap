@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Hook documentation.
@@ -15,7 +16,7 @@
  *   child elements) will be used to create variables... These variables should
  *   be uninstalled in the modules creating them.
  */
-function hook_islandora_gmap_form_fieldset(&$form_state) {
+function hook_islandora_gmap_form_fieldset(array &$form_state) {
   $base = array(
     '#type' => 'fieldset',
     '#title' => t('My awesome config'),
@@ -75,6 +76,7 @@ function hook_islandora_gmap_gather_geojson(AbstractObject $object) {
  * @see hook_islandora_gmap_gather_geojson()
  */
 function hook_islandora_gmap_gather_geojson_alter(array &$geojson, AbstractObject $object) {
+
 }
 
 /**
@@ -90,4 +92,22 @@ function hook_islandora_gmap_gather_kml(AbstractObject $object) {
   return array(
     'http://googlemaps.github.io/kml-samples/kml/Placemark/placemark.kml',
   );
+}
+
+/**
+ * Gather metadata information for displaying on a given object.
+ *
+ * @param AbstractObject $object
+ *   The object for which metadata is gathered.
+ *
+ * @return array
+ *   An associative array with metadata information.
+ */
+function hook_islandora_gmap_gather_metadata(AbstractObject $object) {
+  return array(
+    'pid' => 'my:coolpid',
+    'label' => 'My Object Label',
+    'description' => 'Sweet object description.',
+  );
+
 }

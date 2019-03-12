@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Utility functions/
+ * Utility functions.
  */
 
 /**
@@ -10,7 +11,7 @@
  * @param AbstractObject $object
  *   The object for which to gather GeoJSON features.
  *
- * @return array|NULL
+ * @return array|null
  *   If any features were returned, an associative array wrapping them up in a
  *   "FeatureCollection"; otherwise, NULL.
  */

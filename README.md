@@ -14,16 +14,19 @@ This module does not do anything on its own, but defines multiple hooks which mo
 This module requires the following modules/libraries:
 
 * [Islandora](https://github.com/islandora/islandora)
+* [markerclusterer.js](https://github.com/googlemaps/v3-utility-library/tree/master/markerclusterer)
 
 ## Installation
 
-Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
+If point clustering is desired, download and install the Google Maps [clusterer plugin] (https://github.com/googlemaps/v3-utility-library/blob/master/markerclusterer/src/markerclusterer.js) and [images folder](https://github.com/googlemaps/v3-utility-library/tree/master/markerclusterer/images) to sites/all/libraries/markerclusterer/, or run `drush markerclusterer-plugin`.
+
+Install this module as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
 
 ## Configuration
 
 At `admin/islandora/tools/gmaps`, there is one point of required configuration: The "Google API Key", under "Basic Configuration".
 
-There is some other general configuration which controls the dimensions of the map, constrains the allowed zoom levels, and adjusts the initial viewport configuration.
+There is some other general configuration which controls the dimensions of the map, allows point clustering, allows information boxes for points, constrains the allowed zoom levels, and adjusts the initial viewport configuration.
 
 ## Troubleshooting/Issues
 
