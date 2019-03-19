@@ -127,6 +127,14 @@ function islandora_gmap_islandora_gmap_form_fieldset(&$form_state) {
 function islandora_gmap_islandora_view_object(AbstractObject $object) {
   module_load_include('inc', 'islandora_gmap', 'includes/utilities');
   $geojson_info = islandora_gmap_gather_geojson($object);
+  if ($geojson_info && variable_get('islandora_gmap_show_point_info', FALSE)) {
+    $infobox_html = theme('islandora_gmap_infobox', array(
+      'islandora_object' => $object,
+    ));
+    foreach ($geojson_info['features'] as &$feature) {
+      $feature['properties'] = array('infobox_html' => $infobox_html);
+    }
+  }
   $kml_info = islandora_gmap_gather_kml($object);
   return islandora_gmap_map_view($object, $geojson_info, $kml_info);
 }
@@ -209,26 +217,6 @@ function islandora_gmap_map_view($object, $geojson_info, $kml_info) {
     if (variable_get('islandora_gmap_cluster_points', FALSE)) {
       $markerclusterer_path = libraries_get_path('markerclusterer');
       $renderable['#attached']['js'][] = "$markerclusterer_path/src/markerclusterer.js";
-    }
-    if (variable_get('islandora_gmap_show_point_info', FALSE)) {
-      $infobox_html = theme('islandora_gmap_infobox', array(
-        'islandora_object' => $object,
-      ));
-
-      drupal_array_set_nested_value(
-        $renderable,
-        array(
-          '#attached',
-          'js',
-          0,
-          'data',
-          'islandora_gmap',
-          'data',
-          $id,
-          'infobox_html',
-        ),
-        $infobox_html
-      );
     }
 
     $fieldset = array(
