@@ -54,8 +54,11 @@
         if (info.show_point_info) {
           google.maps.event.addListener(marker, 'click', function (marker, f_evt) {
             return function() {
-              boxText.innerHTML = info.infobox_html;
-              infoWindow.open(map, marker);
+              var infobox_html = f_evt.feature.getProperty('infobox_html');
+              if (infobox_html) {
+                boxText.innerHTML = f_evt.feature.getProperty('infobox_html');
+                infoWindow.open(map, marker);
+              }
             };
           }(marker, f_evt));
         }
