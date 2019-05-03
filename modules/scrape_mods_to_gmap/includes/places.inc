@@ -37,7 +37,7 @@ function _scrape_mods_to_gmap_lookup($coord) {
   )));
 
   $response_data = drupal_json_decode($response->data);
-  $map_to_geojson = function ($result) {
+  $map_to_geojson = function ($result) use ($coord) {
     return array(
       'type' => 'Feature',
       'geometry' => array(
@@ -46,6 +46,9 @@ function _scrape_mods_to_gmap_lookup($coord) {
           $result['geometry']['location']['lng'],
           $result['geometry']['location']['lat'],
         ),
+      ),
+      'properties' => array(
+        'name' => $coord,
       ),
     );
   };
