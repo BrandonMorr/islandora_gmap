@@ -44,6 +44,7 @@
         var marker = new google.maps.Marker({
           position: f_evt.feature.getGeometry().get(),
           title: f_evt.feature.getProperty('name'),
+          pid: f_evt.feature.getProperty('pid'),
           map: map
         });
 
